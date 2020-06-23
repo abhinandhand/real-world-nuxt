@@ -6,15 +6,16 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import EventCard from '@/components/Eventcard'
+
 export default {
   components: {
     EventCard,
   },
-  async asyncData({ $axios, error }) {
+  async fetch({ store, error }) {
     try {
-      const response = await $axios.get('http://localhost:4000/events')
-      return { events: response.data }
+      await store.dispatch('events/fetchEvents')
     } catch (err) {
       error({
         statusCode: 404,
@@ -22,6 +23,9 @@ export default {
       })
     }
   },
+  computed: mapState({
+    events: (state) => state.events.events,
+  }),
   head() {
     return {
       title: 'Event Listing',
